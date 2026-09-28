@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>微光日记 · 睡前一句正向的话</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='8' fill='%23FFC857'/%3E%3Cg stroke='%23FFC857' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='16' y1='26' x2='16' y2='30'/%3E%3Cline x1='2' y1='16' x2='6' y2='16'/%3E%3Cline x1='26' y1='16' x2='30' y2='16'/%3E%3Cline x1='6' y1='6' x2='8.5' y2='8.5'/%3E%3Cline x1='23.5' y1='23.5' x2='26' y2='26'/%3E%3Cline x1='6' y1='26' x2='8.5' y2='23.5'/%3E%3Cline x1='23.5' y1='8.5' x2='26' y2='6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+<style>
+/* ============ 设计 Token ============ */
+:root{
+  --bg-deep:#16120E;        /* 最深夜色 */
+  --bg-night:#1F1A14;       /* 主背景 */
+  --bg-card:#2A231B;        /* 卡片 */
+  --bg-elev:#342C22;        /* 悬浮 */
+  --sun:#FFC857;            /* 小太阳主色 */
+  --sun-soft:#FFD98A;       /* 太阳柔光 */
+  --sun-dim:#B8893B;        /* 太阳暗部 */
+  --cream:#F5EDDD;          /* 主文字暖白 */
+  --cream-dim:#A89B85;      /* 次文字 */
+  --cream-faint:#6E6455;    /* 弱文字 */
+  --line:#3A3126;           /* 分隔线 */
+  --ok:#9CCB86;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Noto Sans SC',system-ui,sans-serif;
+  background:var(--bg-deep);
+  color:var(--cream);
+  font-weight:300;
+  letter-spacing:.02em;
+  min-height:100vh;
+  /* 桌面端两侧氛围光 */
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255,200,87,.08), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 110%, rgba(255,200,87,.05), transparent 60%);
+}
+
+/* ============ 手机容器 ============ */
+.phone{
+  max-width:420px;
+  margin:0 auto;
+  min-height:100vh;
+  background:var(--bg-night);
+  position:relative;
+  box-shadow:0 0 80px rgba(0,0,0,.5);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+
+/* ============ 视图切换 ============ */
+.view{display:none;flex:1;flex-direction:column;animation:fadeIn .4s ease}
+.view.active{display:flex}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ============ 顶部状态栏 ============ */
+.statusbar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 24px 8px;
+  font-size:12px;color:var(--cream-dim);
+  font-weight:400;
+}
+.statusbar .time{color:var(--cream)}
+
+/* ============ 通用 ============ */
+.serif{font-family:'Noto Serif SC',serif}
+.center{text-align:center}
+.mt-auto{margin-top:auto}
+.pad{padding:0 28px}
+
+/* ============ 小太阳 SVG ============ */
+.sun-wrap{
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.sun{
+  width:120px;height:120px;
+  animation:sunBreathe 4s ease-in-out infinite;
+}
+@keyframes sunBreathe{
+  0%,100%{transform:scale(1);filter:drop-shadow(0 0 20px rgba(255,200,87,.3))}
+  50%{transform:scale(1.06);filter:drop-shadow(0 0 40px rgba(255,200,87,.55))}
+}
+.sun.recording{
+  animation:sunPulse 1.2s ease-in-out infinite;
+  width:160px;height:160px;
+}
+@keyframes sunPulse{
+  0%,100%{transform:scale(1);filter:drop-shadow(0 0 30px rgba(255,200,87,.5))}
+  50%{transform:scale(1.12);filter:drop-shadow(0 0 60px rgba(255,200,87,.85))}
+}
+
+/* ============ 首页 ============ */
+#view-home .hero{
+  flex:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 28px;
+  gap:28px;
+}
+.greeting{
+  font-size:14px;color:var(--cream-dim);font-weight:400;
+  letter-spacing:.15em;
+}
+.today-q{
+  font-family:'Noto Serif SC',serif;
+  font-size:22px;line-height:1.7;
+  color:var(--cream);
+  text-align:center;
+  max-width:280px;
+  font-weight:500;
+}
+.today-q::before{content:"“";color:var(--sun);margin-right:2px}
+.today-q::after{content:"”";color:var(--sun);margin-left:2px}
+
+.start-btn{
+  margin-top:16px;
+  background:var(--sun);
+  color:#2A1E08;
+  border:none;
+  padding:16px 36px;
+  border-radius:999px;
+  font-size:15px;font-weight:600;
+  font-family:'Noto Sans SC',sans-serif;
+  cursor:pointer;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 6px 24px rgba(255,200,87,.25);
+  transition:transform .2s ease;
+}
+.start-btn:active{transform:scale(.96)}
+.start-btn svg{width:18px;height:18px}
+
+.hint{
+  font-size:12px;color:var(--cream-faint);
+  margin-top:8px;
+}
+
+/* 今日已完成态 */
+.done-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(156,203,134,.12);
+  color:var(--ok);
+  padding:6px 14px;border-radius:999px;
+  font-size:12px;font-weight:400;
+}
+
+/* ============ 录制页 ============ */
+#view-record{
+  background:radial-gradient(ellipse at center, #2A2015 0%, #16120E 80%);
+}
+#view-record .hero{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 28px;gap:32px;
+}
+.rec-label{
+  font-size:12px;color:var(--cream-dim);letter-spacing:.2em;
+}
+.rec-timer{
+  font-family:'Noto Serif SC',serif;
+  font-size:48px;color:var(--sun-soft);
+  font-weight:500;
+  font-variant-numeric:tabular-nums;
+}
+.rec-q{
+  font-family:'Noto Serif SC',serif;
+  font-size:18px;color:var(--cream);text-align:center;
+  max-width:280px;line-height:1.7;
+}
+.waveform{
+  display:flex;align-items:center;gap:4px;height:40px;
+}
+.waveform span{
+  width:3px;background:var(--sun);border-radius:2px;
+  animation:wave 1.2s ease-in-out infinite;
+}
+@keyframes wave{
+  0%,100%{height:6px;opacity:.5}
+  50%{height:32px;opacity:1}
+}
+.tip{
+  font-size:12px;color:var(--cream-faint);text-align:center;line-height:1.7;
+}
+
+/* 实时转写 */
+.live-transcript{
+  width:100%;max-width:320px;
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px 16px;
+  text-align:left;
+}
+.live-label{
+  display:flex;align-items:center;gap:6px;
+  font-size:10px;color:var(--cream-dim);letter-spacing:.15em;
+  margin-bottom:8px;
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--ok);
+  animation:dotBlink 1.4s ease-in-out infinite;
+}
+@keyframes dotBlink{
+  0%,100%{opacity:.4;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.3)}
+}
+.live-text{
+  font-family:'Noto Serif SC',serif;
+  font-size:14px;line-height:1.8;color:var(--cream);
+  min-height:50px;
+}
+.live-placeholder{color:var(--cream-faint);font-family:'Noto Sans SC',sans-serif;font-size:13px}
+.live-cursor{
+  display:inline-block;width:2px;height:1em;
+  background:var(--sun);vertical-align:-2px;
+  margin-left:2px;
+  animation:cursorBlink .8s step-end infinite;
+}
+@keyframes cursorBlink{
+  0%,100%{opacity:1}
+  50%{opacity:0}
+}
+
+/* 提交按钮 */
+.submit-btn{
+  background:var(--sun);
+  color:#2A1E08;
+  border:none;
+  padding:15px 32px;
+  border-radius:999px;
+  font-size:15px;font-weight:600;
+  font-family:'Noto Sans SC',sans-serif;
+  cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:0 6px 24px rgba(255,200,87,.3);
+  transition:transform .2s ease;
+}
+.submit-btn:active{transform:scale(.96)}
+.submit-btn svg{width:18px;height:18px}
+
+/* ============ 保存成功页 ============ */
+#view-saved .hero{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 28px;gap:24px;
+}
+.cheer{
+  font-family:'Noto Serif SC',serif;
+  font-size:24px;line-height:1.8;
+  color:var(--cream);
+  text-align:center;
+  max-width:300px;
+  font-weight:500;
+}
+.cheer-sub{
+  font-size:13px;color:var(--cream-dim);text-align:center;line-height:1.7;
+  max-width:260px;
+}
+
+/* ============ 通用底部导航 ============ */
+.tabbar{
+  display:flex;justify-content:space-around;align-items:center;
+  padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+  background:rgba(22,18,14,.9);
+  border-top:1px solid var(--line);
+  backdrop-filter:blur(10px);
+}
+.tab{
+  background:none;border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  color:var(--cream-faint);
+  font-size:10px;font-family:'Noto Sans SC',sans-serif;
+  padding:4px 12px;
+  transition:color .2s;
+}
+.tab svg{width:22px;height:22px}
+.tab.active{color:var(--sun)}
+
+/* ============ 历史页 ============ */
+.page-head{
+  padding:20px 28px 16px;
+}
+.page-title{
+  font-family:'Noto Serif SC',serif;
+  font-size:26px;font-weight:600;color:var(--cream);
+}
+.page-sub{
+  font-size:12px;color:var(--cream-dim);margin-top:6px;
+}
+.record-list{
+  flex:1;overflow-y:auto;
+  padding:0 20px 100px;
+}
+.record-item{
+  background:var(--bg-card);
+  border-radius:16px;
+  padding:18px 20px;
+  margin-bottom:12px;
+  cursor:pointer;
+  transition:transform .15s ease;
+}
+.record-item:active{transform:scale(.98)}
+.record-date{
+  font-size:11px;color:var(--sun);
+  font-weight:500;letter-spacing:.05em;
+  margin-bottom:8px;
+}
+.record-text{
+  font-family:'Noto Serif SC',serif;
+  font-size:15px;line-height:1.7;color:var(--cream);
+}
+.record-meta{
+  margin-top:10px;
+  font-size:11px;color:var(--cream-faint);
+  display:flex;gap:12px;align-items:center;
+}
+
+/* ============ 周总结页 ============ */
+.week-card{
+  margin:0 20px 16px;
+  background:linear-gradient(135deg,#2E2415 0%,#241C12 100%);
+  border:1px solid rgba(255,200,87,.15);
+  border-radius:20px;
+  padding:24px;
+}
+.week-label{
+  font-size:11px;color:var(--sun);letter-spacing:.2em;
+}
+.week-title{
+  font-family:'Noto Serif SC',serif;
+  font-size:20px;color:var(--cream);margin-top:8px;line-height:1.6;
+}
+.week-stats{
+  display:flex;gap:20px;margin-top:20px;
+  padding-top:16px;border-top:1px solid var(--line);
+}
+.stat{flex:1}
+.stat-num{
+  font-family:'Noto Serif SC',serif;
+  font-size:24px;color:var(--sun-soft);font-weight:600;
+}
+.stat-label{font-size:11px;color:var(--cream-dim);margin-top:2px}
+.tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.tag{
+  background:rgba(255,200,87,.1);
+  color:var(--sun-soft);
+  padding:5px 12px;border-radius:999px;
+  font-size:11px;
+}
+
+/* ============ 设置页 ============ */
+.setting-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 28px;
+  border-bottom:1px solid var(--line);
+}
+.setting-label{font-size:15px;color:var(--cream)}
+.setting-desc{font-size:11px;color:var(--cream-faint);margin-top:3px}
+.switch{
+  width:46px;height:26px;border-radius:999px;
+  background:var(--bg-elev);position:relative;cursor:pointer;
+  transition:background .2s;
+  border:none;
+}
+.switch.on{background:var(--sun)}
+.switch::after{
+  content:"";position:absolute;top:3px;left:3px;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--cream);transition:transform .2s;
+}
+.switch.on::after{transform:translateX(20px);background:#2A1E08}
+
+.time-pill{
+  background:var(--bg-card);color:var(--sun);
+  padding:8px 16px;border-radius:999px;
+  font-size:14px;font-weight:500;
+}
+
+/* ============ Toast ============ */
+.toast{
+  position:absolute;bottom:100px;left:50%;transform:translateX(-50%);
+  background:var(--bg-elev);
+  color:var(--cream);
+  padding:10px 20px;border-radius:999px;
+  font-size:13px;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;
+  z-index:100;
+  white-space:nowrap;
+}
+.toast.show{opacity:1}
+
+/* ============ 响应式 ============ */
+@media (max-width:420px){
+  .phone{box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- 状态栏 -->
+  <div class="statusbar">
+    <span class="time" id="statusTime">22:30</span>
+    <span>微光日记</span>
+  </div>
+
+  <!-- ============ 视图：首页 ============ -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div class="greeting">今晚的微光</div>
+
+      <div class="sun-wrap">
+        <svg class="sun" viewBox="0 0 120 120">
+          <g stroke="#FFC857" stroke-width="3" stroke-linecap="round">
+            <line x1="60" y1="8" x2="60" y2="22"/>
+            <line x1="60" y1="98" x2="60" y2="112"/>
+            <line x1="8" y1="60" x2="22" y2="60"/>
+            <line x1="98" y1="60" x2="112" y2="60"/>
+            <line x1="23" y1="23" x2="33" y2="33"/>
+            <line x1="87" y1="87" x2="97" y2="97"/>
+            <line x1="23" y1="97" x2="33" y2="87"/>
+            <line x1="87" y1="33" x2="97" y2="23"/>
+          </g>
+          <circle cx="60" cy="60" r="26" fill="#FFC857"/>
+          <circle cx="60" cy="60" r="26" fill="url(#g1)" opacity=".4"/>
+          <defs>
+            <radialGradient id="g1" cx="0.3" cy="0.3">
+              <stop offset="0%" stop-color="#FFE9B8"/>
+              <stop offset="100%" stop-color="#FFC857"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <div class="today-q" id="todayQuestion">今天最让你有成就感的一件小事是什么？</div>
+
+      <button class="start-btn" onclick="startRecording()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+        说给微光听
+      </button>
+
+      <div class="hint">点一下通知，直接开口 · 说完自动保存</div>
+    </div>
+
+    <nav class="tabbar">
+      <button class="tab active" data-nav="home" onclick="switchView('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
+        今日
+      </button>
+      <button class="tab" data-nav="history" onclick="switchView('history')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 8v4l3 2"/></svg>
+        时光
+      </button>
+      <button class="tab" data-nav="week" onclick="switchView('week')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        周报
+      </button>
+      <button class="tab" data-nav="settings" onclick="switchView('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
+        设置
+      </button>
+    </nav>
+  </section>
+
+  <!-- ============ 视图：录制中 ============ -->
+  <section class="view" id="view-record">
+    <div class="hero">
+      <div class="rec-label">正在聆听</div>
+
+      <div class="sun-wrap">
+        <svg class="sun recording" viewBox="0 0 120 120">
+          <g stroke="#FFC857" stroke-width="3" stroke-linecap="round">
+            <line x1="60" y1="8" x2="60" y2="22"/>
+            <line x1="60" y1="98" x2="60" y2="112"/>
+            <line x1="8" y1="60" x2="22" y2="60"/>
+            <line x1="98" y1="60" x2="112" y2="60"/>
+            <line x1="23" y1="23" x2="33" y2="33"/>
+            <line x1="87" y1="87" x2="97" y2="97"/>
+            <line x1="23" y1="97" x2="33" y2="87"/>
+            <line x1="87" y1="33" x2="97" y2="23"/>
+          </g>
+          <circle cx="60" cy="60" r="26" fill="#FFC857"/>
+        </svg>
+      </div>
+
+      <div class="rec-timer" id="recTimer">00:00</div>
+
+      <div class="rec-q" id="recQuestion">今天最让你有成就感的一件小事是什么？</div>
+
+      <div class="waveform" id="waveform"></div>
+
+      <div class="live-transcript">
+        <div class="live-label">
+          <span class="live-dot"></span>
+          <span id="liveLabel">实时转写</span>
+        </div>
+        <div class="live-text" id="liveText">
+          <span class="live-placeholder">说点什么，微光会在这里听见…</span>
+        </div>
+      </div>
+
+      <button class="submit-btn" onclick="finishRecording()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        说完了，收好
+      </button>
+
+      <div class="tip">说完点上面的按钮<br>微光会替你收好</div>
+    </div>
+  </section>
+
+  <!-- ============ 视图：保存成功 ============ -->
+  <section class="view" id="view-saved">
+    <div class="hero">
+      <div class="sun-wrap">
+        <svg class="sun" viewBox="0 0 120 120">
+          <g stroke="#9CCB86" stroke-width="3" stroke-linecap="round" opacity=".6">
+            <line x1="60" y1="8" x2="60" y2="22"/>
+            <line x1="60" y1="98" x2="60" y2="112"/>
+            <line x1="8" y1="60" x2="22" y2="60"/>
+            <line x1="98" y1="60" x2="112" y2="60"/>
+          </g>
+          <circle cx="60" cy="60" r="26" fill="#9CCB86"/>
+        </svg>
+      </div>
+      <div class="cheer" id="cheerText">今天你认真生活了<br>这就很了不起</div>
+      <div class="cheer-sub" id="cheerSub">微光已经替你收好这句话，晚安。</div>
+    </div>
+  </section>
+
+  <!-- ============ 视图：历史 ============ -->
+  <section class="view" id="view-history">
+    <div class="page-head">
+      <div class="page-title serif">时光里的微光</div>
+      <div class="page-sub">每一句，都在发光</div>
+    </div>
+    <div class="record-list" id="recordList"></div>
+    <nav class="tabbar">
+      <button class="tab" data-nav="home" onclick="switchView('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>今日
+      </button>
+      <button class="tab active" data-nav="history" onclick="switchView('history')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 8v4l3 2"/></svg>时光
+      </button>
+      <button class="tab" data-nav="week" onclick="switchView('week')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>周报
+      </button>
+      <button class="tab" data-nav="settings" onclick="switchView('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>设置
+      </button>
+    </nav>
+  </section>
+
+  <!-- ============ 视图：周报 ============ -->
+  <section class="view" id="view-week">
+    <div class="page-head">
+      <div class="page-title serif">这一周的光</div>
+      <div class="page-sub">9月22日 — 9月28日</div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding-bottom:100px">
+      <div class="week-card">
+        <div class="week-label">WEEK 39</div>
+        <div class="week-title">你比自己想象中<br>更认真地在生活</div>
+        <div class="tag-row">
+          <span class="tag">坚持小能手</span>
+          <span class="tag">生活发现家</span>
+          <span class="tag">温柔待己</span>
+        </div>
+        <div class="week-stats">
+          <div class="stat">
+            <div class="stat-num">5</div>
+            <div class="stat-label">微光天数</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">12.4<span style="font-size:14px">分</span></div>
+            <div class="stat-label">总记录时长</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">3</div>
+            <div class="stat-label">高光瞬间</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pad" style="margin-top:8px">
+        <div style="font-size:13px;color:var(--cream-dim);margin-bottom:12px;line-height:1.7">
+          微光攒了这一周里你说过的最暖的三句：
+        </div>
+      </div>
+      <div id="weekHighlights" style="padding:0 20px"></div>
+    </div>
+    <nav class="tabbar">
+      <button class="tab" data-nav="home" onclick="switchView('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>今日
+      </button>
+      <button class="tab" data-nav="history" onclick="switchView('history')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 8v4l3 2"/></svg>时光
+      </button>
+      <button class="tab active" data-nav="week" onclick="switchView('week')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>周报
+      </button>
+      <button class="tab" data-nav="settings" onclick="switchView('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>设置
+      </button>
+    </nav>
+  </section>
+
+  <!-- ============ 视图：设置 ============ -->
+  <section class="view" id="view-settings">
+    <div class="page-head">
+      <div class="page-title serif">设置</div>
+      <div class="page-sub">让微光准时找到你</div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding-bottom:100px">
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">睡前提醒</div>
+          <div class="setting-desc">每晚准时来一句</div>
+        </div>
+        <button class="switch on" onclick="this.classList.toggle('on');showToast(this.classList.contains('on')?'提醒已开启':'提醒已关闭')"></button>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">提醒时间</div>
+          <div class="setting-desc">到点推送，点一下就录</div>
+        </div>
+        <span class="time-pill" onclick="showToast('演示版：时间选择')">22:30</span>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">仅正向引导</div>
+          <div class="setting-desc">不反思、不批评</div>
+        </div>
+        <button class="switch on" onclick="this.classList.toggle('on')"></button>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">本地存储</div>
+          <div class="setting-desc">所有记录只在你的手机里</div>
+        </div>
+        <span style="font-size:12px;color:var(--ok)">已保护</span>
+      </div>
+    </div>
+    <nav class="tabbar">
+      <button class="tab" data-nav="home" onclick="switchView('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>今日
+      </button>
+      <button class="tab" data-nav="history" onclick="switchView('history')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 8v4l3 2"/></svg>时光
+      </button>
+      <button class="tab" data-nav="week" onclick="switchView('week')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>周报
+      </button>
+      <button class="tab active" data-nav="settings" onclick="switchView('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>设置
+      </button>
+    </nav>
+  </section>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ============ 数据 ============ */
+const QUESTIONS = [
+  "今天最让你有成就感的一件小事是什么？",
+  "今天有哪一刻，你觉得自己做得挺好的？",
+  "今天你对自己最满意的一个瞬间是？",
+  "今天有什么温柔的事，值得被记住？",
+  "今天你为自己做了什么？哪怕很小。",
+  "今天哪一刻，你觉得生活还不错？",
+  "今天你克服了什么，哪怕只是一点点？"
+];
+
+const CHEERS = [
+  {t:"今天你认真生活了\n这就很了不起", s:"微光已经替你收好这句话，晚安。"},
+  {t:"谢谢你愿意\n对自己说这些", s:"这句肯定，明天还会陪着你。"},
+  {t:"你今天也在\n好好发光呀", s:"哪怕只有一点点，也足够暖。"},
+  {t:"这一句属于你\n谁也拿不走", s:"晚安，明天继续慢慢来。"},
+  {t:"被自己认可的感觉\n很好吧", s:"这就是微光的意义。"}
+];
+
+const HISTORY = [
+  {date:"今天 · 周一", text:"终于把那份拖了一周的报告写完了，虽然中间很烦躁，但交出去那一刻真的松了一口气。", dur:"1分24秒"},
+  {date:"9月27日 · 周日", text:"早上给自己煮了一碗很好吃的面，太阳晒进来的时候觉得，日子其实还挺舒服的。", dur:"48秒"},
+  {date:"9月26日 · 周六", text:"一个人去公园走了走，没看手机，听了好多鸟叫，感觉脑子被清空了。", dur:"1分05秒"},
+  {date:"9月25日 · 周五", text:"今天开会没躲，主动说了自己的想法，说完有点紧张，但还好没人笑我。", dur:"1分32秒"},
+  {date:"9月24日 · 周四", text:"帮同事带了杯咖啡，他说谢谢的时候，觉得自己今天还挺温柔的。", dur:"36秒"},
+  {date:"9月23日 · 周三", text:"跑了三公里，比上周快了一分钟，虽然很慢但真的有在进步。", dur:"58秒"}
+];
+
+const WEEK_HIGHLIGHTS = [
+  "“交出去那一刻真的松了一口气。”",
+  "“没看手机，听了好多鸟叫。”",
+  "“主动说了自己的想法。”"
+];
+
+/* 模拟你会说的话（演示用） */
+const SAMPLE_SPEECHES = [
+  "今天最有成就感的是，终于把那个拖了好久的方案交了，虽然中间很焦虑，但交出去那一刻真的松了一口气。",
+  "今天早上给自己煮了碗面，阳光照进来的时候，觉得日子其实还挺舒服的。",
+  "今天开会的时候主动说了自己的想法，虽然有点紧张，但说完感觉还挺好的。",
+  "晚上一个人去公园走了走，没看手机，听了好多鸟叫，感觉脑子被清空了。"
+];
+
+/* ============ 状态 ============ */
+let recSeconds = 0;
+let recTimerId = null;
+let typeTimerId = null;
+let typeCharIdx = 0;
+let currentSpeech = "";
+let questionIdx = new Date().getDate() % QUESTIONS.length;
+let recognition = null;
+let finalTranscript = "";
+let interimTranscript = "";
+let usingRealASR = false;
+let finishing = false;
+
+/* ============ 工具 ============ */
+function $(id){return document.getElementById(id)}
+function pad2(n){return n<10?"0"+n:""+n}
+
+function switchView(name){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  $("view-"+name).classList.add("active");
+  document.querySelectorAll(".tab").forEach(t=>{
+    t.classList.toggle("active", t.dataset.nav===name);
+  });
+  window.scrollTo(0,0);
+}
+
+function showToast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._tid);
+  t._tid = setTimeout(()=>t.classList.remove("show"), 1800);
+}
+
+/* ============ 渲染 ============ */
+function renderQuestion(){
+  const q = QUESTIONS[questionIdx];
+  $("todayQuestion").textContent = q;
+  $("recQuestion").textContent = q;
+}
+
+function renderHistory(){
+  $("recordList").innerHTML = HISTORY.map(r=>`
+    <div class="record-item">
+      <div class="record-date">${r.date}</div>
+      <div class="record-text">${r.text}</div>
+      <div class="record-meta">
+        <span>音频 ${r.dur}</span>
+        <span>·</span>
+        <span>已本地保存</span>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderWeekHighlights(){
+  $("weekHighlights").innerHTML = WEEK_HIGHLIGHTS.map(h=>`
+    <div class="record-item" style="background:var(--bg-card)">
+      <div class="record-text serif" style="color:var(--sun-soft)">${h}</div>
+    </div>
+  `).join("");
+}
+
+/* ============ 录音模拟 ============ */
+function buildWaveform(){
+  const w = $("waveform");
+  w.innerHTML = "";
+  for(let i=0;i<24;i++){
+    const s = document.createElement("span");
+    s.style.animationDelay = (i*0.06)+"s";
+    w.appendChild(s);
+  }
+}
+
+function startRecording(){
+  switchView("record");
+  recSeconds = 0;
+  finishing = false;
+  finalTranscript = "";
+  interimTranscript = "";
+  $("recTimer").textContent = "00:00";
+  buildWaveform();
+  $("liveText").innerHTML = '<span class="live-placeholder">正在请求麦克风…</span>';
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(SR){
+    try{
+      recognition = new SR();
+      recognition.lang = "zh-CN";
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+
+      recognition.onresult = (e)=>{
+        interimTranscript = "";
+        for(let i=e.resultIndex; i<e.results.length; i++){
+          const t = e.results[i][0].transcript;
+          if(e.results[i].isFinal){
+            finalTranscript += t;
+          }else{
+            interimTranscript += t;
+          }
+        }
+        renderLiveText(finalTranscript + interimTranscript, true);
+      };
+      recognition.onerror = (e)=>{
+        if(e.error === "not-allowed" || e.error === "service-not-allowed" || e.error === "audio-capture"){
+          // 权限被拒或设备不可用 → 降级到演示模式
+          recognition = null;
+          fallbackToDemo();
+        }else if(e.error === "network"){
+          recognition = null;
+          fallbackToDemo("网络不可用，演示模式");
+        }
+      };
+      recognition.onend = ()=>{
+        // 浏览器静音几秒后会自动断开；如果用户没主动结束，就重启
+        if(!finishing && usingRealASR){
+          try{ recognition.start(); }catch(_){}
+        }
+      };
+
+      usingRealASR = true;
+      $("liveLabel").textContent = "实时转写";
+      $("liveText").innerHTML = '<span class="live-placeholder">说点什么，微光会在这里听见…</span>';
+      recognition.start();
+    }catch(err){
+      recognition = null;
+      fallbackToDemo();
+    }
+  }else{
+    fallbackToDemo("当前浏览器不支持实时转写");
+  }
+
+  // 计时器：最长5分钟自动结束
+  clearInterval(recTimerId);
+  recTimerId = setInterval(()=>{
+    recSeconds++;
+    const m = Math.floor(recSeconds/60);
+    const s = recSeconds%60;
+    $("recTimer").textContent = pad2(m)+":"+pad2(s);
+    if(recSeconds >= 300){
+      finishRecording();
+    }
+  }, 1000);
+}
+
+function renderLiveText(text, isLive){
+  if(!text){
+    $("liveText").innerHTML = '<span class="live-placeholder">说点什么，微光会在这里听见…</span>';
+    return;
+  }
+  let html = escapeHtml(text);
+  if(isLive) html += '<span class="live-cursor"></span>';
+  $("liveText").innerHTML = html;
+}
+
+/* 真实ASR不可用时的演示模式 */
+function fallbackToDemo(reason){
+  usingRealASR = false;
+  recognition = null;
+  $("liveLabel").textContent = reason || "演示模式";
+  currentSpeech = SAMPLE_SPEECHES[Math.floor(Math.random()*SAMPLE_SPEECHES.length)];
+  typeCharIdx = 0;
+  $("liveText").innerHTML = '<span class="live-cursor"></span>';
+  clearInterval(typeTimerId);
+  setTimeout(()=>{
+    typeTimerId = setInterval(()=>{
+      if(typeCharIdx >= currentSpeech.length){
+        clearInterval(typeTimerId);
+        finalTranscript = currentSpeech;
+        renderLiveText(currentSpeech, false);
+        return;
+      }
+      typeCharIdx++;
+      renderLiveText(currentSpeech.slice(0, typeCharIdx), true);
+    }, 130);
+  }, 800);
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function finishRecording(){
+  finishing = true;
+  clearInterval(recTimerId);
+  clearInterval(typeTimerId);
+  if(recognition){
+    try{ recognition.stop(); }catch(_){}
+    recognition = null;
+  }
+  // 如果真实ASR下用户还没说过任何话，但显示了占位文字，就不保留空内容
+  const spoken = (finalTranscript + interimTranscript).trim();
+
+  // 随机一句鼓励
+  const c = CHEERS[Math.floor(Math.random()*CHEERS.length)];
+  $("cheerText").innerHTML = c.t.replace(/\n/g,"<br>");
+  $("cheerSub").textContent = spoken && spoken.length > 5
+    ? "微光已经替你收好这句话，晚安。"
+    : "没关系，明天再开口也来得及，晚安。";
+  switchView("saved");
+  // 2.5秒后回到首页
+  setTimeout(()=>{
+    questionIdx = (questionIdx+1) % QUESTIONS.length;
+    renderQuestion();
+    switchView("home");
+    showToast("今晚的微光已收好");
+  }, 2600);
+}
+
+/* ============ 状态栏时间 ============ */
+function updateStatusTime(){
+  const d = new Date();
+  $("statusTime").textContent = pad2(d.getHours())+":"+pad2(d.getMinutes());
+}
+
+/* ============ 启动 ============ */
+renderQuestion();
+renderHistory();
+renderWeekHighlights();
+updateStatusTime();
+setInterval(updateStatusTime, 30000);
+</script>
+</body>
+</html>
